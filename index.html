@@ -78,8 +78,19 @@
   <main class="container">
     <div class="arrow-row" id="arrowRow"></div>
     <div id="grid" class="grid" tabindex="0" aria-label="Sudoku Grid"></div>
-    <input id="ime" type="tel" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="one-time-code" aria-hidden="true"/>
-
+    <!-- 九宫格数字输入，仅触屏显示 -->
+    <div id="numPad" class="num-pad hidden" aria-label="Number Pad">
+      <button data-num="1">1</button>
+      <button data-num="2">2</button>
+      <button data-num="3">3</button>
+      <button data-num="4">4</button>
+      <button data-num="5">5</button>
+      <button data-num="6">6</button>
+      <button data-num="7">7</button>
+      <button data-num="8">8</button>
+      <button data-num="9">9</button>
+      <button data-num="0" class="clear">清空</button>
+    </div>
     <p class="legend" data-i18n="legend">绿色为可编辑格；蓝色为当前格；黄色为与当前格相同数字。</p>
   </main>
 
