@@ -1,6 +1,7 @@
 (function () {
   const qs = (s, el = document) => el.querySelector(s);
   const qsa = (s, el = document) => Array.from(el.querySelectorAll(s));
+  const numPad = qs("#numPad");
 
   // ---- i18n ----
   const I18N = {
@@ -66,8 +67,6 @@
   const dialogQuit = qs("#quitDialog");
   const dialogToast = qs("#toast");
   const toastText = qs("#toastText");
-
-  const ime = qs("#ime");
 
   let lang = "zh";
   let keymap = "wasd";
@@ -195,7 +194,7 @@
         cell.addEventListener("click", () => {
           cur = {x, y};
           render();
-          gridEl.focus(); ime.value=""; ime.focus();
+          gridEl.focus();
         });
         gridEl.appendChild(cell);
       }
@@ -347,6 +346,10 @@
   }
 
   // ---- Events ----
+  // 显示数字键盘（仅触屏设备）
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    numPad.classList.remove("hidden");
+  }
   qs("#newGame").addEventListener("click", newGame);
   qs("#check").addEventListener("click", () => showToast(isComplete() ? t("CONGRATULATION") : t("NOT_COMPLETED")));
   qs("#undo").addEventListener("click", () => {
@@ -366,27 +369,8 @@
   langSel.addEventListener("change", () => { lang = langSel.value; applyI18n(); render(); });
   keymapSel.addEventListener("change", () => { keymap = keymapSel.value; });
   diffSel.addEventListener("change", () => {});
-  // mobile IME input
-  ime.addEventListener("input", () => {
-    const s = ime.value.replace(/\D/g, "");
-    if (s.length === 0) {
-      setCell(cur.x, cur.y, 0);
-    } else {
-      const ch = s[s.length - 1];
-      const v = parseInt(ch, 10);
-      setCell(cur.x, cur.y, isNaN(v) ? 0 : v);
-    }
-    ime.value = "";
-  });
-  ime.addEventListener("keydown", (e) => {
-    if (e.key === "Backspace") {
-      setCell(cur.x, cur.y, 0);
-      e.preventDefault();
-    }
-  });
-
   gridEl.addEventListener("keydown", onKeyDown);
-  window.addEventListener("keydown", (e)=>{ const ae=document.activeElement; if (ae !== gridEl && ae !== ime) onKeyDown(e); });
+  window.addEventListener("keydown", (e)=>{ if (document.activeElement !== gridEl) onKeyDown(e); });
 
   dialogQuit.addEventListener("close", () => {
     const v = dialogQuit.returnValue;
@@ -401,5 +385,17 @@
   // init
   applyI18n();
   newGame();
-  gridEl.focus(); ime.value=""; ime.focus();
+  gridEl.focus();
+  // 数字按钮点击处理
+  numPad.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const v = parseInt(btn.dataset.num, 10);
+      if (v === 0) {
+        // 清空
+        setCell(cur.x, cur.y, 0);
+      } else {
+        setCell(cur.x, cur.y, v);
+      }
+    });
+  });
 })();
