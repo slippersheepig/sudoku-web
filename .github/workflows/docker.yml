@@ -2,7 +2,9 @@ name: Build & Push Docker (Hub + GHCR)
 
 on:
   workflow_dispatch:
-
+  repository_dispatch:
+    types: [python_update]
+    
 jobs:
   build:
     runs-on: ubuntu-latest
