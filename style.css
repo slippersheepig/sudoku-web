@@ -25,5 +25,39 @@ dialog{border:none;border-radius:.8rem;background:#151925;color:#e7e9ee;padding:
 menu{display:flex;gap:.5rem;justify-content:flex-end;margin:1rem 0 0;padding:0}
 #toast{padding:.25rem .8rem}
 
-/* hidden numeric IME input for mobile */
-#ime{position:fixed;top:-1000px;left:0;width:1px;height:1px;opacity:0;z-index:-1}
+/* ===== 九宫格数字输入条 ===== */
+.num-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  background: #f5f5f5;
+  border-top: 1px solid #ddd;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.num-pad button {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+}
+
+.num-pad button:active {
+  background: #e0e0e0;
+}
+
+.num-pad .clear {
+  grid-column: span 3;
+  background: #ffdddd;
+}
+
+.hidden {
+  display: none;
+}
