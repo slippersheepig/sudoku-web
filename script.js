@@ -67,6 +67,8 @@
   const dialogToast = qs("#toast");
   const toastText = qs("#toastText");
 
+  const ime = qs("#ime");
+
   let lang = "zh";
   let keymap = "wasd";
   let size = 9;
@@ -193,7 +195,7 @@
         cell.addEventListener("click", () => {
           cur = {x, y};
           render();
-          gridEl.focus();
+          gridEl.focus(); ime.value=""; ime.focus();
         });
         gridEl.appendChild(cell);
       }
@@ -364,8 +366,27 @@
   langSel.addEventListener("change", () => { lang = langSel.value; applyI18n(); render(); });
   keymapSel.addEventListener("change", () => { keymap = keymapSel.value; });
   diffSel.addEventListener("change", () => {});
+  // mobile IME input
+  ime.addEventListener("input", () => {
+    const s = ime.value.replace(/\D/g, "");
+    if (s.length === 0) {
+      setCell(cur.x, cur.y, 0);
+    } else {
+      const ch = s[s.length - 1];
+      const v = parseInt(ch, 10);
+      setCell(cur.x, cur.y, isNaN(v) ? 0 : v);
+    }
+    ime.value = "";
+  });
+  ime.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace") {
+      setCell(cur.x, cur.y, 0);
+      e.preventDefault();
+    }
+  });
+
   gridEl.addEventListener("keydown", onKeyDown);
-  window.addEventListener("keydown", (e)=>{ if (document.activeElement !== gridEl) onKeyDown(e); });
+  window.addEventListener("keydown", (e)=>{ const ae=document.activeElement; if (ae !== gridEl && ae !== ime) onKeyDown(e); });
 
   dialogQuit.addEventListener("close", () => {
     const v = dialogQuit.returnValue;
@@ -380,5 +401,5 @@
   // init
   applyI18n();
   newGame();
-  gridEl.focus();
+  gridEl.focus(); ime.value=""; ime.focus();
 })();
