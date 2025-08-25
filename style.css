@@ -24,3 +24,6 @@ select,.btn{height:2.05rem;padding:0 .75rem;border-radius:.6rem;border:1px solid
 dialog{border:none;border-radius:.8rem;background:#151925;color:#e7e9ee;padding:1rem 1.25rem;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 menu{display:flex;gap:.5rem;justify-content:flex-end;margin:1rem 0 0;padding:0}
 #toast{padding:.25rem .8rem}
+
+/* hidden numeric IME input for mobile */
+#ime{position:fixed;top:-1000px;left:0;width:1px;height:1px;opacity:0;z-index:-1}
