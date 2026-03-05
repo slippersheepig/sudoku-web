@@ -160,17 +160,20 @@
   // ---- Rendering ----
   function renderArrows() {
     arrowRow.innerHTML = "";
+    const fragment = document.createDocumentFragment();
     for (let x = 0; x < 9; x++) {
       const d = document.createElement("div");
       d.className = "arrow";
       d.textContent = (x === cur.x) ? "^" : " ";
-      arrowRow.appendChild(d);
+      fragment.appendChild(d);
     }
+    arrowRow.appendChild(fragment);
   }
 
   function render() {
     gridEl.innerHTML = "";
     renderArrows();
+    const fragment = document.createDocumentFragment();
 
     const highlighted = getCell(cur.x, cur.y)?.value || 0;
 
@@ -196,20 +199,30 @@
           render();
           gridEl.focus();
         });
-        gridEl.appendChild(cell);
+        fragment.appendChild(cell);
       }
     }
+    gridEl.appendChild(fragment);
   }
 
   function getCell(x, y) { return cells[idx(x,y)]; }
   function setCell(x, y, val) {
+    if (!Number.isInteger(val) || val < 0 || val > 9) return false;
     const c = getCell(x,y);
     if (c.fixed) return false;
     const pre = c.value;
+    if (pre === val) return false;
     c.value = val;
     undoStack.push({x,y, preValue: pre, curValue: val});
     render();
     return true;
+  }
+
+  function clampCur(point) {
+    return {
+      x: Math.min(8, Math.max(0, point?.x ?? 0)),
+      y: Math.min(8, Math.max(0, point?.y ?? 0)),
+    };
   }
 
   // ---- Validation ----
@@ -267,9 +280,11 @@
       try {
         const data = JSON.parse(reader.result);
         if (!data || !Array.isArray(data.map) || data.map.length !== 81) throw new Error("bad");
-        cells = data.map.map(o => ({ value: o.value|0, state: o.state, fixed: !!o.fixed }));
-        cur = data.cur && Number.isInteger(data.cur.x) && Number.isInteger(data.cur.y) ? data.cur : {x:0,y:0};
-        undoStack = Array.isArray(data.commands) ? data.commands.slice() : [];
+        cells = data.map.map(o => ({ value: Math.min(9, Math.max(0, o.value | 0)), state: o.state, fixed: !!o.fixed }));
+        cur = clampCur(data.cur);
+        undoStack = Array.isArray(data.commands)
+          ? data.commands.filter(cmd => Number.isInteger(cmd?.x) && Number.isInteger(cmd?.y))
+          : [];
         if (data.keymap) { keymap = data.keymap; keymapSel.value = keymap; }
         if (data.lang) { lang = data.lang; langSel.value = lang; applyI18n(); }
         if (data.difficulty && DIFFICULTY_ERASE[data.difficulty]) diffSel.value = data.difficulty;
