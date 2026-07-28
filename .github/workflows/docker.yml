@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [python_update]
-  pull_request:
+  push:
     branches: ["main"]
     
 jobs:
