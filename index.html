@@ -68,7 +68,7 @@
       <button id="check" class="btn" data-i18n="check">检测完成(Enter)</button>
       <button id="undo" class="btn" data-i18n="undo">撤销(u)</button>
       <button id="save" class="btn" data-i18n="save">保存</button>
-      <label class="file-btn">
+      <label class="btn file-btn">
         <input type="file" id="loadFile" accept="application/json"/>
         <span data-i18n="load">载入</span>
       </label>
@@ -89,14 +89,14 @@
       <button data-num="7">7</button>
       <button data-num="8">8</button>
       <button data-num="9">9</button>
-      <button data-num="0" class="clear">清空</button>
+      <button data-num="0" class="clear" data-i18n="clear">清空</button>
     </div>
-    <p class="legend" data-i18n="legend">绿色为可编辑格；蓝色为当前格；黄色为与当前格相同数字。</p>
+    <p class="legend" data-i18n="legend">绿色=可编辑；蓝色=当前格；黄色=与当前格相同数字。</p>
   </main>
 
   <dialog id="quitDialog">
     <form method="dialog">
-      <p id="quitMsg">Quit game? Save progress?</p>
+      <p id="quitMsg" data-i18n="quitMsg">Quit game? Save progress?</p>
       <menu>
         <button value="cancel" class="btn ghost" data-i18n="continue">继续</button>
         <button value="save" class="btn" data-i18n="save">保存</button>
