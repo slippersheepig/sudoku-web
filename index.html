@@ -19,20 +19,20 @@
       <rect x='5' y='5' width='90' height='90'
         fill='%23ffffff' stroke='%23000000' stroke-width='4' rx='8' ry='8'
         filter='url(%23shadow)'/>
-      <line x1='38' y1='5' x2='38' y2='95' stroke='%23000000' stroke-width='2'/>
-      <line x1='72' y1='5' x2='72' y2='95' stroke='%23000000' stroke-width='2'/>
-      <line x1='5' y1='38' x2='95' y2='38' stroke='%23000000' stroke-width='2'/>
-      <line x1='5' y1='72' x2='95' y2='72' stroke='%23000000' stroke-width='2'/>
-      <circle cx='55' cy='24' r='14' fill='url(%23gradBlue)'/>
-      <text x='55' y='30' font-size='26' text-anchor='middle'
+      <line x1='35' y1='5' x2='35' y2='95' stroke='%23000000' stroke-width='2'/>
+      <line x1='65' y1='5' x2='65' y2='95' stroke='%23000000' stroke-width='2'/>
+      <line x1='5' y1='35' x2='95' y2='35' stroke='%23000000' stroke-width='2'/>
+      <line x1='5' y1='65' x2='95' y2='65' stroke='%23000000' stroke-width='2'/>
+      <circle cx='50' cy='20' r='12' fill='url(%23gradBlue)'/>
+      <text x='50' y='28' font-size='22' text-anchor='middle'
         font-family='Arial' font-weight='bold' fill='%23000000'
         stroke='%23ffffff' stroke-width='1'>3</text>
-      <circle cx='22' cy='56' r='14' fill='url(%23gradBlue)'/>
-      <text x='22' y='62' font-size='26' text-anchor='middle'
+      <circle cx='20' cy='50' r='12' fill='url(%23gradBlue)'/>
+      <text x='20' y='58' font-size='22' text-anchor='middle'
         font-family='Arial' font-weight='bold' fill='%23000000'
         stroke='%23ffffff' stroke-width='1'>6</text>
-      <circle cx='88' cy='88' r='14' fill='url(%23gradBlue)'/>
-      <text x='88' y='94' font-size='26' text-anchor='middle'
+      <circle cx='80' cy='80' r='12' fill='url(%23gradBlue)'/>
+      <text x='80' y='88' font-size='22' text-anchor='middle'
         font-family='Arial' font-weight='bold' fill='%23000000'
         stroke='%23ffffff' stroke-width='1'>9</text>
     </svg>">
@@ -40,72 +40,74 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">Sudoku</div>
-    <div class="controls">
-      <label>
-        <span data-i18n="language">语言</span>:
-        <select id="lang">
-          <option value="zh">中文</option>
-          <option value="en">English</option>
-        </select>
-      </label>
-      <label>
-        <span data-i18n="keymap">键位</span>:
-        <select id="keymap">
-          <option value="wasd">WASD</option>
-          <option value="vim">VIM</option>
-        </select>
-      </label>
-      <label>
-        <span data-i18n="difficulty">难度</span>:
-        <select id="difficulty">
-          <option value="easy">Easy</option>
-          <option value="normal">Normal</option>
-          <option value="hard">Hard</option>
-        </select>
-      </label>
-      <button id="newGame" class="btn" data-i18n="newGame">新游戏</button>
-      <button id="check" class="btn" data-i18n="check">检测完成(Enter)</button>
-      <button id="undo" class="btn" data-i18n="undo">撤销(u)</button>
-      <button id="save" class="btn" data-i18n="save">保存</button>
-      <label class="btn file-btn">
-        <input type="file" id="loadFile" accept="application/json"/>
-        <span data-i18n="load">载入</span>
-      </label>
+    <div class="topbar-inner">
+      <div class="brand">Sudoku</div>
+      <div class="controls">
+        <label class="field">
+          <span class="field-label"><span data-i18n="language">语言</span>:</span>
+          <select id="lang">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label"><span data-i18n="keymap">键位</span>:</span>
+          <select id="keymap">
+            <option value="wasd">WASD</option>
+            <option value="vim">VIM</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label"><span data-i18n="difficulty">难度</span>:</span>
+          <select id="difficulty">
+            <option value="easy" data-i18n="easy">简单</option>
+            <option value="normal" data-i18n="normal">普通</option>
+            <option value="hard" data-i18n="hard">困难</option>
+          </select>
+        </label>
+        <button type="button" id="newGame" class="btn primary" data-i18n="newGame">新游戏</button>
+        <button type="button" id="check" class="btn" data-i18n="check">检测完成(Enter)</button>
+        <button type="button" id="undo" class="btn" data-i18n="undo">撤销(u)</button>
+        <button type="button" id="save" class="btn" data-i18n="save">保存</button>
+        <label class="btn file-btn">
+          <input type="file" id="loadFile" accept="application/json"/>
+          <span data-i18n="load">载入</span>
+        </label>
+      </div>
     </div>
   </header>
 
   <main class="container">
-    <div class="arrow-row" id="arrowRow"></div>
+    <div class="arrow-row" id="arrowRow" aria-hidden="true"></div>
     <div id="grid" class="grid" tabindex="0" aria-label="Sudoku Grid"></div>
-    <!-- 九宫格数字输入，仅触屏显示 -->
+    <!-- 数字键盘，仅触屏显示 -->
     <div id="numPad" class="num-pad hidden" aria-label="Number Pad">
-      <button data-num="1">1</button>
-      <button data-num="2">2</button>
-      <button data-num="3">3</button>
-      <button data-num="4">4</button>
-      <button data-num="5">5</button>
-      <button data-num="6">6</button>
-      <button data-num="7">7</button>
-      <button data-num="8">8</button>
-      <button data-num="9">9</button>
-      <button data-num="0" class="clear" data-i18n="clear">清空</button>
+      <button type="button" data-num="1">1</button>
+      <button type="button" data-num="2">2</button>
+      <button type="button" data-num="3">3</button>
+      <button type="button" data-num="4">4</button>
+      <button type="button" data-num="5">5</button>
+      <button type="button" data-num="6">6</button>
+      <button type="button" data-num="7">7</button>
+      <button type="button" data-num="8">8</button>
+      <button type="button" data-num="9">9</button>
+      <button type="button" data-num="0" class="clear" data-i18n="clear">清空</button>
     </div>
     <p class="legend" data-i18n="legend">绿色=可编辑；蓝色=当前格；黄色=与当前格相同数字。</p>
   </main>
 
   <dialog id="quitDialog">
     <form method="dialog">
-      <p id="quitMsg" data-i18n="quitMsg">Quit game? Save progress?</p>
+      <p id="quitMsg" data-i18n="quitMsg">退出游戏？是否保存进度？</p>
       <menu>
         <button value="cancel" class="btn ghost" data-i18n="continue">继续</button>
-        <button value="save" class="btn" data-i18n="save">保存</button>
+        <button value="save" class="btn primary" data-i18n="save">保存</button>
         <button value="quit" class="btn danger" data-i18n="quit">退出</button>
       </menu>
     </form>
   </dialog>
 
-  <dialog id="toast"><p id="toastText"></p></dialog>
+  <dialog id="toast" aria-live="polite"><p id="toastText"></p></dialog>
 
   <script src="script.js"></script>
 </body>
