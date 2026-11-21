@@ -2,8 +2,11 @@ name: Check python:alpine updates
 
 on:
   schedule:
-    - cron: 8 1 * * *
+    - cron: "8 1 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   check-update:
@@ -15,9 +18,13 @@ jobs:
       - name: Get latest update timestamp
         id: check
         run: |
-          LAST_UPDATED=$(curl -s https://hub.docker.com/v2/repositories/library/python/tags/alpine \
-            | jq -r '.last_updated')
-          echo "last_updated=$LAST_UPDATED" >> $GITHUB_OUTPUT
+          LAST_UPDATED=$(curl -fsSL https://hub.docker.com/v2/repositories/library/python/tags/alpine \
+            | jq -r '.last_updated // empty')
+          if [ -z "$LAST_UPDATED" ]; then
+            echo "Failed to fetch last_updated timestamp." >&2
+            exit 1
+          fi
+          echo "last_updated=$LAST_UPDATED" >> "$GITHUB_OUTPUT"
           echo "Docker Hub last_updated: $LAST_UPDATED"
 
       - name: Compare with stored timestamp
@@ -28,16 +35,17 @@ jobs:
           else
             PREV="(none)"
           fi
+          CURRENT="${{ steps.check.outputs.last_updated }}"
           echo "Previous: $PREV"
-          echo "Current : ${{ steps.check.outputs.last_updated }}"
+          echo "Current : $CURRENT"
 
-          if [ "$PREV" = "${{ steps.check.outputs.last_updated }}" ]; then
+          if [ "$PREV" = "$CURRENT" ]; then
             echo "No update detected."
-            echo "updated=false" >> $GITHUB_OUTPUT
+            echo "updated=false" >> "$GITHUB_OUTPUT"
           else
             echo "Update detected!"
-            echo "updated=true" >> $GITHUB_OUTPUT
-            echo "${{ steps.check.outputs.last_updated }}" > .python_last_updated
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            echo "$CURRENT" > .python_last_updated
             git config --global user.name "github-actions"
             git config --global user.email "actions@github.com"
             git add .python_last_updated
@@ -48,7 +56,7 @@ jobs:
       - name: Trigger docker workflows
         if: steps.compare.outputs.updated == 'true'
         run: |
-          curl -X POST \
+          curl -fsSL -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/dispatches \
